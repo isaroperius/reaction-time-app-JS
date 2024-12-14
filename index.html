@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reaction Time Test</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background-color: black;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+
+    h1, p {
+      text-align: center;
+    }
+
+    #test-box {
+      width: 200px;
+      height: 200px;
+      background-color: red;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    #result {
+      margin-top: 20px;
+      font-size: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Reaction Time Test</h1>
+  <p>Instructions: Click "Start Test," wait for the red box to turn green, and click as fast as you can when it turns green.</p>
+  <button id="start-button">Start Test</button>
+  <div id="test-box" hidden>Click Me!</div>
+  <div id="result"></div>
+
+  <script>
+    const startButton = document.getElementById('start-button');
+    const testBox = document.getElementById('test-box');
+    const result = document.getElementById('result');
+
+    let timerStart;
+    let isGreen = false;
+
+    startButton.addEventListener('click', () => {
+      startButton.disabled = true; // Disable the button during the test
+      result.textContent = ''; // Clear any previous result
+      testBox.style.backgroundColor = 'red'; // Reset the box to red
+      testBox.hidden = false; // Show the box
+
+      // Random delay before turning green (2 to 5 seconds)
+      const delay = Math.random() * (5000 - 2000) + 2000;
+
+      setTimeout(() => {
+        testBox.style.backgroundColor = 'green';
+        isGreen = true;
+        timerStart = performance.now(); // Record the start time
+      }, delay);
+    });
+
+    testBox.addEventListener('click', () => {
+      if (!isGreen) {
+        // If the user clicks before it turns green
+        result.textContent = 'Too soon! Wait for green!';
+        startButton.disabled = false; // Enable the button for retry
+        testBox.hidden = true; // Hide the box
+        return;
+      }
+
+      // Calculate reaction time
+      const reactionTime = performance.now() - timerStart;
+      result.textContent = `Your reaction time: ${reactionTime.toFixed(2)} ms`;
+
+      // Reset state
+      isGreen = false;
+      startButton.disabled = false; // Enable the button for retry
+      testBox.hidden = true; // Hide the box
+    });
+  </script>
+</body>
+</html>
